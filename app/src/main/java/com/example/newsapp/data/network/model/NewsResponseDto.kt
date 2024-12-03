@@ -10,11 +10,11 @@ import com.google.gson.annotations.SerializedName
 data class NewsResponseDto(
 
     @SerializedName("status")
-    val status: String,
+    val status: String?,
 
     @SerializedName("totalResults")
-    val totalResults: Int,
+    val totalResults: Int?,
 
     @SerializedName("articles")
-    val articles: List<ArticleItem>
+    val articles: List<ArticleItem>?
 )

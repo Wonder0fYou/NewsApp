@@ -8,5 +8,5 @@ data class SourceEntity(
     val id: String?,
 
     @ColumnInfo("name")
-    val name: String
+    val name: String?
 )

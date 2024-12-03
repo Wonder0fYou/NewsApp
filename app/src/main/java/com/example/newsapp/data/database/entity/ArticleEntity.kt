@@ -17,26 +17,26 @@ data class ArticleEntity(
     val id: Int = 0,
 
     @Embedded
-    val source: SourceEntity,
+    val source: SourceEntity?,
 
     @ColumnInfo("author")
     val author: String?,
 
     @ColumnInfo("title")
-    val title: String,
+    val title: String?,
 
     @ColumnInfo("description")
-    val description: String,
+    val description: String?,
 
     @ColumnInfo("url")
-    val url: String,
+    val url: String?,
 
     @ColumnInfo("urlToImage")
     val urlToImage: String?,
 
     @ColumnInfo("publishedAt")
-    val publishedAt: String,
+    val publishedAt: String?,
 
     @ColumnInfo("content")
-    val content: String
+    val content: String?
 )

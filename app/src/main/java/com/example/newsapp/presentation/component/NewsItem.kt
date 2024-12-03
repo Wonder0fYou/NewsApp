@@ -51,7 +51,7 @@ fun NewsItem(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = newsItem.title,
+                text = newsItem.title ?: "",
                 fontSize = 16.sp,
                 fontWeight = W800,
                 modifier = Modifier
@@ -68,7 +68,7 @@ fun NewsItem(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = newsItem.publishedAt.formatTime(),
+                    text = newsItem.publishedAt!!.formatTime(),
                     fontSize = 12.sp
                 )
             }

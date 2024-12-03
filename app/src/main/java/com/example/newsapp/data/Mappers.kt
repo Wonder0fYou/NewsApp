@@ -7,7 +7,7 @@ import com.example.newsapp.domain.entity.SourceItem
 
 fun ArticleEntity.toArticleItem(): ArticleItem {
     return ArticleItem(
-        source = source.toSourceItem(),
+        source = source?.toSourceItem(),
         author = author,
         title = title,
         description = description,
@@ -20,7 +20,7 @@ fun ArticleEntity.toArticleItem(): ArticleItem {
 
 fun ArticleItem.toArticleEntity(): ArticleEntity {
     return ArticleEntity(
-        source = source.toSourceEntity(),
+        source = source?.toSourceEntity(),
         author = author,
         title = title,
         description = description,

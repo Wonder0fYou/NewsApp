@@ -1,5 +1,6 @@
 package com.example.newsapp.data
 
+import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -53,6 +54,7 @@ class NewsRemoteMediator @Inject constructor(
                         ?: return MediatorResult.Success(
                             endOfPaginationReached = remoteKeys != null
                         )
+                    Log.d("NewsRemote", "$nextPage")
                     nextPage
                 }
             }
@@ -61,32 +63,36 @@ class NewsRemoteMediator @Inject constructor(
                 page = currentPage,
                 perPage = 10
             )
-            val endOfPaginationReached = response.articles.isEmpty()
+            val endOfPaginationReached = response.articles?.isEmpty()
 
             val prevPage = if (currentPage == 1 || currentPage == 0) null else currentPage - 1
-            val nextPage = if (endOfPaginationReached) null else currentPage + 1
+            val nextPage = if (endOfPaginationReached == true) null else currentPage + 1
 
             newsDB.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     newsDB.newsDao().clearAll()
                     newsRemoteKeysDao.deleteAllRemoteKeys()
                 }
-                val keys = response.articles.map { articleItem ->
+                val keys = response.articles?.map { articleItem ->
                     NewsRemoteKeys(
-                        id = articleItem.title,
+                        id = articleItem.title ?: "1",
                         prevPage = prevPage,
                         nextPage = nextPage
                     )
                 }
-                val newsEntities = response.articles.map { article ->
+                val newsEntities = response.articles?.map { article ->
                     article.toArticleEntity()
                 }
-                newsRemoteKeysDao.addALlRemoteKeys(remoteKeys = keys)
-                newsDao.upsertAll(newsEntities)
+                if (keys != null) {
+                    newsRemoteKeysDao.addALlRemoteKeys(remoteKeys = keys)
+                }
+                if (newsEntities != null) {
+                    newsDao.upsertAll(newsEntities)
+                }
             }
 
             MediatorResult.Success(
-                endOfPaginationReached = endOfPaginationReached
+                endOfPaginationReached = endOfPaginationReached ?: false
             )
         } catch (e: IOException) {
             MediatorResult.Error(e)
