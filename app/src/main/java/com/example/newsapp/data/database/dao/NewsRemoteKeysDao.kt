@@ -12,6 +12,9 @@ interface NewsRemoteKeysDao {
     @Query("SELECT * FROM remote_keys WHERE id =:id")
     suspend fun getRemoteKeys(id: String): NewsRemoteKeys
 
+    @Query("SELECT * FROM remote_keys")
+    suspend fun allKeys(): List<NewsRemoteKeys>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addALlRemoteKeys(remoteKeys: List<NewsRemoteKeys>)
 

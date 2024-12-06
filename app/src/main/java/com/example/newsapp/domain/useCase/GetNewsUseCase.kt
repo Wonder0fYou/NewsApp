@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetNewsUseCase @Inject constructor(
     private val newsRepository: NewsRepository
 ){
-    fun invoke() = newsRepository.getNews()
+    fun invoke() = newsRepository.getNewsFromMediator()
 }

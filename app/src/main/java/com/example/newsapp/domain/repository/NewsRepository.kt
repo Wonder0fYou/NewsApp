@@ -5,5 +5,6 @@ import com.example.newsapp.domain.entity.ArticleItem
 import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
-    fun getNews(): Flow<PagingData<ArticleItem>>
+    fun getNewsFromNetwork(): Flow<PagingData<ArticleItem>>
+    fun getNewsFromMediator(): Flow<PagingData<ArticleItem>>
 }

@@ -30,6 +30,10 @@ class NewsRemoteMediator @Inject constructor(
     private val newsDao = newsDB.newsDao()
     private val newsRemoteKeysDao = newsDB.newsRemoteKeysDao()
 
+    override suspend fun initialize(): InitializeAction {
+        return InitializeAction.LAUNCH_INITIAL_REFRESH
+    }
+
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, ArticleEntity>
@@ -44,45 +48,52 @@ class NewsRemoteMediator @Inject constructor(
                     val remoteKeys = getRemoteKeyForFirstItem(state)
                     val prevPage = remoteKeys?.prevPage
                         ?: return MediatorResult.Success(
-                            endOfPaginationReached = remoteKeys != null
+                            endOfPaginationReached = false
                         )
                     prevPage
                 }
                 LoadType.APPEND ->   {
                     val remoteKeys = getRemoteKeyForLastItem(state)
-                    val nextPage = remoteKeys?.nextPage
-                        ?: return MediatorResult.Success(
-                            endOfPaginationReached = remoteKeys != null
-                        )
-                    Log.d("NewsRemote", "$nextPage")
-                    nextPage
+//                    val nextPage = remoteKeys?.nextPage
+//                        ?: return MediatorResult.Success(
+//                            endOfPaginationReached = false
+//                        )
+                    val nextPage = newsDB.withTransaction {
+                        newsRemoteKeysDao.allKeys().lastOrNull()
+                    }
+                    Log.d("NewsRemote", "${nextPage?.nextPage} Append")
+                    nextPage?.nextPage ?: return MediatorResult.Success(true)
                 }
             }
 
             val response = newsApi.getNews(
-                page = currentPage,
-                perPage = 10
+                page = currentPage
             )
-            val endOfPaginationReached = response.articles?.isEmpty()
-
-            val prevPage = if (currentPage == 1 || currentPage == 0) null else currentPage - 1
-            val nextPage = if (endOfPaginationReached == true) null else currentPage + 1
+            val endOfPaginationReached = response.body()
+                ?.articles?.isEmpty() ?: false
 
             newsDB.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     newsDB.newsDao().clearAll()
                     newsRemoteKeysDao.deleteAllRemoteKeys()
                 }
-                val keys = response.articles?.map { articleItem ->
-                    NewsRemoteKeys(
-                        id = articleItem.title ?: "1",
-                        prevPage = prevPage,
-                        nextPage = nextPage
-                    )
-                }
-                val newsEntities = response.articles?.map { article ->
-                    article.toArticleEntity()
-                }
+                val prevPage = if (currentPage == 1 || currentPage == 0) null else currentPage - 1
+                val nextPage = if (endOfPaginationReached) null else currentPage + 1
+                Log.d("NewsRemote", "$prevPage PrevPage")
+                Log.d("NewsRemote", "$nextPage NextPage")
+                val keys = response.body()
+                    ?.articles?.map { articleItem ->
+                        articleItem!!.toArticleEntity()
+                        NewsRemoteKeys(
+                            id = articleItem.title.toString(),
+                            prevPage = prevPage,
+                            nextPage = nextPage
+                        )
+                    }
+                val newsEntities = response.body()
+                    ?.articles?.map { articleItem ->
+                        articleItem!!.toArticleEntity()
+                    }
                 if (keys != null) {
                     newsRemoteKeysDao.addALlRemoteKeys(remoteKeys = keys)
                 }
@@ -92,7 +103,7 @@ class NewsRemoteMediator @Inject constructor(
             }
 
             MediatorResult.Success(
-                endOfPaginationReached = endOfPaginationReached ?: false
+                endOfPaginationReached = endOfPaginationReached
             )
         } catch (e: IOException) {
             MediatorResult.Error(e)
@@ -123,7 +134,7 @@ class NewsRemoteMediator @Inject constructor(
     private suspend fun getRemoteKeyForLastItem(
         state: PagingState<Int, ArticleEntity>
     ): NewsRemoteKeys? {
-        return state.pages.lastOrNull() {it.data.isNotEmpty()}?.data?.lastOrNull()
+        return state.pages.lastOrNull { it.data.isNotEmpty()}?.data?.lastOrNull()
             ?.let { articleEntity ->
                 newsRemoteKeysDao.getRemoteKeys(id = articleEntity.id.toString())
             }

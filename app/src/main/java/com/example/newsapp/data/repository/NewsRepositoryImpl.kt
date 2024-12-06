@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.example.newsapp.data.NewsPagingSource
 import com.example.newsapp.data.NewsRemoteMediator
 import com.example.newsapp.data.database.AppDatabase
 import com.example.newsapp.data.database.dao.NewsDao
@@ -31,11 +32,12 @@ class NewsRepositoryImpl @Inject constructor(
 ): NewsRepository {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getNews(): Flow<PagingData<ArticleItem>> {
+    override fun getNewsFromMediator(): Flow<PagingData<ArticleItem>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 5,
-                prefetchDistance = 5
+                pageSize = 100,
+                prefetchDistance = 5,
+                initialLoadSize = 30
             ),
             remoteMediator = NewsRemoteMediator(
                 newsDB = newsDB,
@@ -49,5 +51,22 @@ class NewsRepositoryImpl @Inject constructor(
                 it.toArticleItem()
             }
         }
+    }
+
+    override fun getNewsFromNetwork(): Flow<PagingData<ArticleItem>> {
+       return Pager(
+           config = PagingConfig(
+               pageSize = 10,
+               prefetchDistance = 5,
+               initialLoadSize = 30
+           ),
+           pagingSourceFactory = {
+               NewsPagingSource(newsApi)
+           }
+       ).flow.map { pagingData ->
+           pagingData.map {
+               it.toArticleItem()
+           }
+       }
     }
 }
