@@ -16,5 +16,5 @@ data class NewsResponseDto(
     val totalResults: Int?,
 
     @SerializedName("articles")
-    val articles: List<ArticleItem?> = listOf()
+    val articles: List<ArticleItem?>? = listOf()
 )

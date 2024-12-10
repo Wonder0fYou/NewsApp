@@ -53,11 +53,6 @@ class NewsRemoteMediator @Inject constructor(
                     prevPage
                 }
                 LoadType.APPEND ->   {
-                    val remoteKeys = getRemoteKeyForLastItem(state)
-//                    val nextPage = remoteKeys?.nextPage
-//                        ?: return MediatorResult.Success(
-//                            endOfPaginationReached = false
-//                        )
                     val nextPage = newsDB.withTransaction {
                         newsRemoteKeysDao.allKeys().lastOrNull()
                     }
