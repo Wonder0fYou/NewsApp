@@ -33,7 +33,7 @@ import com.example.newsapp.presentation.NewsViewModel
 @Composable
 fun NewsListScreen(
     onArticleClick: () -> Unit,
-    viewModel: NewsViewModel = hiltViewModel<NewsViewModel>()
+    viewModel: NewsViewModel = hiltViewModel()
 ) {
     val newsPagingState = viewModel.newsPagingDataFlow.collectAsLazyPagingItems()
     Scaffold (
@@ -60,7 +60,7 @@ private fun NewsListContent(
             .padding(padding)
     ) {
         val pagingState = newsPagingState.loadState
-        if (pagingState.refresh is LoadState.Loading || pagingState.append is LoadState.Loading || pagingState.prepend is LoadState.Loading) {
+        if (pagingState.refresh is LoadState.Loading) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -106,8 +106,8 @@ private fun NewsListContent(
                                     }
                                 }
                             }
+                        }
                     }
-                }
                 }
             }
         }

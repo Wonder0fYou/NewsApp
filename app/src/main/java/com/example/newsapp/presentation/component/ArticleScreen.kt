@@ -1,5 +1,6 @@
 package com.example.newsapp.presentation.component
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.newsapp.R
 import com.example.newsapp.presentation.NewsViewModel
-import com.example.newsapp.presentation.model.UserState
 import com.kevinnzou.web.WebView
 import com.kevinnzou.web.rememberWebViewState
 
@@ -27,9 +27,10 @@ import com.kevinnzou.web.rememberWebViewState
 @Composable
 fun ArticleScreen(
     onBackClick:() -> Unit,
-    viewmodel: NewsViewModel = hiltViewModel<NewsViewModel>()
+    viewmodel: NewsViewModel = hiltViewModel()
 ) {
     val newsItem by viewmodel.userState.collectAsState()
+    Log.d("ArticleScreen", "${newsItem.openUrl}")
     Scaffold(
         topBar = {
             TopAppBar(
