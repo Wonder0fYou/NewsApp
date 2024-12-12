@@ -1,5 +1,6 @@
 package com.example.newsapp.presentation.component
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight.Companion.W800
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.newsapp.domain.entity.ArticleItem
+import com.example.newsapp.navigation.Screen
 import com.example.newsapp.presentation.model.UserAction
 import com.example.newsapp.utils.formatTime
 
@@ -24,13 +27,16 @@ import com.example.newsapp.utils.formatTime
 fun NewsItem(
     newsItem: ArticleItem,
     onAction: (UserAction) -> Unit,
-    onArticleClick: () -> Unit
+    onArticleClick: () -> Unit,
+    navController: NavController
 ) {
     Card (
         modifier = Modifier
             .clickable {
-                onAction(UserAction.OnNewsCardClick(newsItem.url))
-                onArticleClick()
+                newsItem.url?.let { url ->
+                    val encodeUrl = Uri.encode(url)
+                    navController.navigate(Screen.ArticleScreen.createRoute(encodeUrl))
+                }
             }
             .padding(horizontal = 16.dp),
         elevation = CardDefaults.cardElevation(4.dp)

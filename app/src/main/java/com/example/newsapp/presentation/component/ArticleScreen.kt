@@ -27,7 +27,8 @@ import com.kevinnzou.web.rememberWebViewState
 @Composable
 fun ArticleScreen(
     onBackClick:() -> Unit,
-    viewmodel: NewsViewModel = hiltViewModel()
+    viewmodel: NewsViewModel = hiltViewModel(),
+    url: String?
 ) {
     val newsItem by viewmodel.userState.collectAsState()
     Log.d("ArticleScreen", "${newsItem.openUrl}")
@@ -48,7 +49,7 @@ fun ArticleScreen(
                 )
         },
     ) { paddingValues ->
-        val urlState = rememberWebViewState(url = newsItem.openUrl ?: "")
+        val urlState = rememberWebViewState(url = url ?: "")
         WebView(
             state = urlState,
             onCreated = { it.settings.javaScriptEnabled = true },

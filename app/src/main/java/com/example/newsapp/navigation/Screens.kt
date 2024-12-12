@@ -7,6 +7,8 @@ sealed class Screen(
         route = "homeScreen"
     )
     data object ArticleScreen: Screen(
-        route = "articleScreen"
-    )
+        route = "articleScreen/{url}"
+    ) {
+        fun createRoute(url: String): String = "articleScreen/$url"
+    }
 }

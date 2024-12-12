@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -33,7 +34,8 @@ import com.example.newsapp.presentation.NewsViewModel
 @Composable
 fun NewsListScreen(
     onArticleClick: () -> Unit,
-    viewModel: NewsViewModel = hiltViewModel()
+    viewModel: NewsViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val newsPagingState = viewModel.newsPagingDataFlow.collectAsLazyPagingItems()
     Scaffold (
@@ -43,7 +45,7 @@ fun NewsListScreen(
         modifier = Modifier
             .fillMaxSize()
     ) { padding ->
-        NewsListContent(padding, newsPagingState, viewModel, onArticleClick)
+        NewsListContent(padding, newsPagingState, viewModel, onArticleClick, navController)
     }
 }
 
@@ -52,7 +54,8 @@ private fun NewsListContent(
     padding: PaddingValues,
     newsPagingState: LazyPagingItems<ArticleItem>,
     viewModel: NewsViewModel,
-    onArticleClick: () -> Unit
+    onArticleClick: () -> Unit,
+    navController: NavController
 ) {
     Box(
         modifier = Modifier
@@ -81,7 +84,8 @@ private fun NewsListContent(
                         NewsItem(
                             newsItem = item,
                             onAction = viewModel::onAction,
-                            onArticleClick = onArticleClick
+                            onArticleClick = onArticleClick,
+                            navController = navController
                         )
                     }
                 }
