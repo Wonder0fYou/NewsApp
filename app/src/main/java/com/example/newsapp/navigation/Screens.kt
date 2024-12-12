@@ -1,4 +1,4 @@
-package com.example.newsapp.presentation.model
+package com.example.newsapp.navigation
 
 sealed class Screen(
     val route: String

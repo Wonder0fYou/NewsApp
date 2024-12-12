@@ -2,4 +2,6 @@
     <string name="app_name">NewsApp</string>
     <string name="news">News</string>
     <string name="article">Article</string>
+    <string name="internet_error">Download error</string>
+    <string name="retry">Retry</string>
 </resources>

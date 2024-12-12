@@ -35,9 +35,9 @@ class NewsRepositoryImpl @Inject constructor(
     override fun getNewsFromMediator(): Flow<PagingData<ArticleItem>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 100,
+                pageSize = 5,
                 prefetchDistance = 5,
-                initialLoadSize = 30
+                initialLoadSize = 10
             ),
             remoteMediator = NewsRemoteMediator(
                 newsDB = newsDB,
@@ -57,8 +57,7 @@ class NewsRepositoryImpl @Inject constructor(
        return Pager(
            config = PagingConfig(
                pageSize = 10,
-               prefetchDistance = 5,
-               initialLoadSize = 30
+               prefetchDistance = 5
            ),
            pagingSourceFactory = {
                NewsPagingSource(newsApi)

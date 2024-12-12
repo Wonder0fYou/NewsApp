@@ -1,6 +1,5 @@
 package com.example.newsapp.data.network.model
 
-import com.example.newsapp.domain.entity.ArticleItem
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -16,5 +15,5 @@ data class NewsResponseDto(
     val totalResults: Int?,
 
     @SerializedName("articles")
-    val articles: List<ArticleItem?>? = listOf()
+    val articles: List<NewsArticleDto?>? = listOf()
 )
